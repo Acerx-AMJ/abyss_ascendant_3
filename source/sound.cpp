@@ -39,3 +39,11 @@ void loadSounds() {
       loadSound(stem, file.path().string());
    }
 }
+
+void unloadSounds() {
+   for (auto &[_, cluster]: sounds) {
+      for (Sound &sound: cluster) {
+         UnloadSound(sound);
+      }
+   }
+}

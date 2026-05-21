@@ -12,11 +12,18 @@ Navigation::Navigation() {
 }
 
 Navigation::~Navigation() {
+   clear();
+}
+
+void Navigation::clear() {
    for (NavigElement &element: elements) {
       if (element.element) {
          destroy(element.element);
       }
    }
+   elements.clear();
+   elements.push_back({});
+   index = 0;
 }
 
 void Navigation::update() {

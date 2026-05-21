@@ -118,6 +118,10 @@ void GameState::fixedUpdate() {
          startCountingTime = true;
       }
 
+      if (startCountingTime) {
+         gameTime += fixedUpdateDeltaTime;
+      }
+
       if (player.finished) {
          playSound("win");
          pausedTimer = 0.0f;
@@ -164,10 +168,6 @@ void GameState::updatePlayingState() {
    if (restartButton.clicked || handleKeyPressWithSound(KEY_R)) {
       shouldRestart = true;
       fadingOut = true;
-   }
-
-   if (startCountingTime) {
-      gameTime += GetFrameTime();
    }
 
    pausedTimer = fmax(0.0f, pausedTimer - GetFrameTime() * 2.0f);
@@ -314,7 +314,7 @@ void GameState::render() {
       float down = GetScreenHeight() - 50.0f * cr;
 
       drawTextureAnimatedCentered(coinAnimation, {cr * 720.0f, down}, cubicSize(50.0f), WHITE, paused);
-      drawTextSemiCentered(font, {cr * 760.0f, down}, TextFormat("%lu/%lu", map.collectedCoins, map.coinCount), 35.0f, WHITE);
+      drawTextSemiCentered(font, {cr * 760.0f, down}, TextFormat("%s/%s", toRomanNumeral(map.collectedCoins).c_str(), toRomanNumeral(map.coinCount).c_str()), 35.0f, WHITE);
 
       drawTextureAnimatedCentered(timerAnimation, {cr * 1300.0f, down}, cubicSize(50.0f), WHITE, paused || !startCountingTime);
       drawTextSemiCentered(font, {cr * 1340.0f, down}, (startCountingTime ? TextFormat("%05.2f", gameTime) : "--.--"), 35.0f, WHITE);
@@ -332,7 +332,7 @@ void GameState::renderPausedState() {
 
    drawTextButtonBackground(500.0f, BLACK);
    drawTextSemiCentered(font, {cr * 100.0f, cr * 100.0f}, map.name.c_str(), 50.0f, WHITE);
-   drawTextSemiCentered(font, {cr * 100.0f, cr * 150.0f}, (toRomanNumeral(map.chapter) + ": " + getChapterCodeName(map.chapter)).c_str(), 35.0f, {200, 200, 200, 255});
+   drawTextSemiCentered(font, {cr * 100.0f, cr * 150.0f}, (toRomanNumeral(map.chapter+1) + ": " + getChapterCodeName(map.chapter)).c_str(), 35.0f, {200, 200, 200, 255});
    pauseNavig.render();
 
    if (pauseNavig.anySelected()) {

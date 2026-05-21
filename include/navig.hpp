@@ -26,6 +26,7 @@ struct Navigation {
    Navigation();
    ~Navigation();
 
+   void clear();
    void update();
    void updateKey(KeyState &key);
    void render();

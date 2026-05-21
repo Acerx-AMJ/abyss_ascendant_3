@@ -1,5 +1,7 @@
+#include "asset.hpp"
 #include "data.hpp"
 #include "loading_state.hpp"
+#include "sound.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <raylib.h>
@@ -38,6 +40,8 @@ int main() {
    }
 
    savePlayerData();
+   unloadSounds();
+   unloadAssets();
    CloseWindow();
    CloseAudioDevice();
 }

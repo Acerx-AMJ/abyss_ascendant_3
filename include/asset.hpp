@@ -9,6 +9,7 @@ Shader &loadShader(const std::string &name, const std::string &vertexPath, const
 void loadTextures();
 void loadFonts();
 void loadShaders();
+void unloadAssets();
 
 Texture &getTexture(const std::string &name);
 Font &getFont(const std::string &name);

@@ -106,6 +106,20 @@ void loadShaders() {
    }
 }
 
+void unloadAssets() {
+   for (auto &[_, texture]: textures) {
+      UnloadTexture(texture);
+   }
+
+   for (auto &[_, font]: fonts) {
+      UnloadFont(font);
+   }
+
+   for (auto &[_, shader]: shaders) {
+      UnloadShader(shader);
+   }
+}
+
 Texture &getTexture(const std::string &name) {
    if (!textures.count(name)) {
       printf("Texture '%s' does not exist, using fallback texture.\n", name.c_str());
