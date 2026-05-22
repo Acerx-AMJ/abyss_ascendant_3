@@ -48,6 +48,90 @@ height=4
 floor=2 2 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 map=1 0 0 0 4 0 3 0 3 0 0 0 0 0 0 0 0 0 0 0
 [END]
+name=Hop Across
+chapter=0
+width=6
+height=5
+floor=2 0 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Shelf Life
+chapter=0
+width=7
+height=5
+floor=2 2 2 0 0 0 0 0 0 0 2 2 2 0 0 0 0 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Coin Row
+chapter=0
+width=8
+height=3
+floor=0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0
+map=1 3 3 3 3 3 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Two Step
+chapter=0
+width=5
+height=4
+floor=2 2 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 4 0 3 0 3 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Hop Across
+chapter=0
+width=6
+height=5
+floor=2 0 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Shelf Life
+chapter=0
+width=7
+height=5
+floor=2 2 2 0 0 0 0 0 0 0 2 2 2 0 0 0 0 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Coin Row
+chapter=0
+width=8
+height=3
+floor=0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0
+map=1 3 3 3 3 3 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Two Step
+chapter=0
+width=5
+height=4
+floor=2 2 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 4 0 3 0 3 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Hop Across
+chapter=0
+width=6
+height=5
+floor=2 0 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Shelf Life
+chapter=0
+width=7
+height=5
+floor=2 2 2 0 0 0 0 0 0 0 2 2 2 0 0 0 0 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Coin Row
+chapter=0
+width=8
+height=3
+floor=0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0
+map=1 3 3 3 3 3 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[END]
+name=Two Step
+chapter=0
+width=5
+height=4
+floor=2 2 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 0 4 0 3 0 3 0 0 0 0 0 0 0 0 0 0 0
+[END]
 name=Ground Floor
 chapter=1
 timerTile=lock
