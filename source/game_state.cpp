@@ -113,15 +113,6 @@ void GameState::fixedUpdate() {
    if (state != State::paused && state != State::won) {
       player.update(map);
 
-      if (!startCountingTime && (player.direction.x != 0.0f || player.direction.y != 0.0f)) {
-         playSound("horn");
-         startCountingTime = true;
-      }
-
-      if (startCountingTime) {
-         gameTime += fixedUpdateDeltaTime;
-      }
-
       if (player.finished) {
          playSound("win");
          pausedTimer = 0.0f;
@@ -146,9 +137,19 @@ void GameState::fixedUpdate() {
          incrementLevelDeathCount(map.levelID);
          camera.shake(75.0f, 0.3f);
          cameraUI.shake(75.0f, 0.3f);
+         startCountingTime = false;
          playerKilled = true;
          shouldRestart = true;
          fadingOut = true;
+      }
+
+      if (!player.died && !startCountingTime && (player.direction.x != 0.0f || player.direction.y != 0.0f)) {
+         playSound("horn");
+         startCountingTime = true;
+      }
+
+      if (startCountingTime) {
+         gameTime += fixedUpdateDeltaTime;
       }
    }
    cameraUI.update();
@@ -317,7 +318,7 @@ void GameState::render() {
       drawTextSemiCentered(font, {cr * 760.0f, down}, TextFormat("%s/%s", toRomanNumeral(map.collectedCoins).c_str(), toRomanNumeral(map.coinCount).c_str()), 35.0f, WHITE);
 
       drawTextureAnimatedCentered(timerAnimation, {cr * 1300.0f, down}, cubicSize(50.0f), WHITE, paused || !startCountingTime);
-      drawTextSemiCentered(font, {cr * 1340.0f, down}, (startCountingTime ? TextFormat("%05.2f", gameTime) : "--.--"), 35.0f, WHITE);
+      drawTextSemiCentered(font, {cr * 1340.0f, down}, (gameTime != 0.0f ? TextFormat("%05.2f", gameTime) : "--.--"), 35.0f, WHITE);
    EndMode2D();
 }
 
