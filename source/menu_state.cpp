@@ -3,6 +3,7 @@
 #include "customize_state.hpp"
 #include "file.hpp"
 #include "game_state.hpp"
+#include "input.hpp"
 #include <math.h>
 
 MenuState::MenuState() {
@@ -126,9 +127,12 @@ void MenuState::updateGameModeSelectionState() {
       }
 
       if (chapterButtons[i]->clicked) {
+         chapterID = i;
          phase = Phase::levelSelection;
+         levelSelected = false;
          levelIndex = 0;
          levelButtons.index = 0;
+         return;
       }
    }
    endlessSelected = false;
@@ -159,30 +163,41 @@ void MenuState::updateGameModeSelectionState() {
 
    }
 
-   if (backButton->clicked) {
+   if (backButton->clicked || handleKeyPressWithSound(KEY_ESCAPE)) {
       phase = Phase::title;
    }
 }
 
 void MenuState::updateLevelSelectionState() {
    ChapterData &data = getChapterData(chapterID);
+   size_t last = std::min(levelButtonCount, data.levels.size() + 1);
    levelButtons.updateKey(levelButtons.up);
    levelButtons.updateKey(levelButtons.down);
    levelButtons.updateKey(levelButtons.tab);
 
    if (levelButtons.up.pressed || (levelButtons.tab.pressed && (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)))) {
-      levelButtons.index = (levelButtons.index == 0 ? levelButtons.elements.size() - 1 : levelButtons.index - 1);
+      levelButtons.index = (levelButtons.index == 0 ? last : levelButtons.index - 1);
+
       if (levelButtons.index == 1 && levelIndex > 0) {
          levelButtons.index += 1;
          levelIndex -= 1;
       }
+
+      if (levelButtons.index == last) {
+         levelIndex = (data.levels.size() < levelButtonCount ? 0 : data.levels.size() - levelButtonCount + 1);
+      }
    }
 
    if (levelButtons.down.pressed || (levelButtons.tab.pressed && (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT)))) {
-      levelButtons.index = (levelButtons.index + 1) % levelButtons.elements.size();
-      if (levelButtons.index == levelButtonCount && levelIndex + levelButtonCount - 1 < data.levels.size()) {
+      levelButtons.index = (levelButtons.index + 1) % (last + 1);
+   
+      if (levelButtons.index == last && levelIndex + levelButtonCount - 1 < data.levels.size()) {
          levelButtons.index -= 1;
          levelIndex += 1;
+      }
+
+      if (levelButtons.index == 1) {
+         levelIndex = 0;
       }
    }
 
@@ -193,42 +208,29 @@ void MenuState::updateLevelSelectionState() {
       Text *button = lvlButtons[i];
       bool selected = (i + 1 == levelButtons.index);
 
-      if (levelIndex > 0 && i == 0 && data.levels.size() > levelButtonCount - 1) {
-         button->disabled = (levelIndex == 0);
-         if (updateLevelButton(button, "^ UP", selected)) {
-            levelIndex -= 1;
-         }
-      }
-      else if (i == levelButtonCount - 1 && i + levelIndex < data.levels.size()) {
-         if (updateLevelButton(button, "v DOWN", selected)) {
-            levelIndex += 1;
-         }
-      }
-      else if (i == levelButtonCount - 1 || i + levelIndex == data.levels.size()) {
+      if (i + levelIndex == data.levels.size()) {
          if (updateLevelButton(button, "BACK", selected)) {
             phase = Phase::gameModeSelection;
          }
+         continue;
       }
-      else {
-         Level &level = getLevel(data.levels[levelIndex + i]);
-         button->ID = level.ID;
-         if (updateLevelButton(button, toRomanNumeral(level.ID+1) + ": " + level.name, selected)) {
-            shouldPlayLevel = true;
-            levelID = level.ID;
-            fadingOut = true;
-         }
+      Level &level = getLevel(data.levels[levelIndex + i]);
+      button->ID = level.ID;
+      if (updateLevelButton(button, level.name, selected)) {
+         shouldPlayLevel = true;
+         levelID = level.ID;
+         fadingOut = true;
+      }
 
-         if (selected) {
-            selectedButton = i;
-         }
+      if (selected) {
+         selectedButton = i;
+      }
 
-         if (button->hovering) {
-            hoveredButton = i;
-         }
+      if (button->hovering) {
+         hoveredButton = i;
       }
    }
 
-   levelSelected = false;
    if (selectedButton != levelButtonCount) {
       levelID = lvlButtons[selectedButton]->ID;
       levelSelected = true;
@@ -236,6 +238,18 @@ void MenuState::updateLevelSelectionState() {
    else if (hoveredButton != levelButtonCount) {
       levelID = lvlButtons[hoveredButton]->ID;
       levelSelected = true;
+   }
+
+   float scroll = GetMouseWheelMove();
+   if (scroll >= 0.5f && levelIndex > 0) {
+      levelIndex -= 1;
+   }
+   else if (scroll <= -0.5f && levelIndex + levelButtonCount <= data.levels.size()) {
+      levelIndex += 1;
+   }
+
+   if (handleKeyPressWithSound(KEY_ESCAPE)) {
+      phase = Phase::gameModeSelection;
    }
 }
 
@@ -298,13 +312,20 @@ void MenuState::renderGameModeSelectionState() {
 }
 
 void MenuState::renderLevelSelectionState() {
+   ChapterData &data = getChapterData(chapterID);
    Font font = getFont("slackey");
    float cr = getCubicRatio();
 
-   drawTextButtonBackground(600.0f, RED);
-   drawTextSemiCentered(font, {cr * 25.0f, cr * 100.0f}, "SELECT LEVEL", 80.0f, WHITE);
+   drawTextButtonBackground(550.0f, RED);
 
-   ChapterData &data = getChapterData(chapterID);
+   float oneValue = GetScreenHeight() / float(data.levels.size() + 1);
+   float offset = levelIndex * oneValue;
+   float visible = fmin(data.levels.size() + 1, levelButtonCount) * oneValue;
+   DrawRectangleV({550.0f * cr, 0.0f}, {50.0f * cr, 1.0f * GetScreenHeight()}, Fade(RED, 0.75f));
+   DrawRectangleV({550.0f * cr, offset}, {50.0f * cr, visible}, WHITE);
+
+   drawTextSemiCentered(font, {cr * 25.0f, cr * 100.0f}, "  SELECT LEVEL", 80.0f, WHITE);
+
    for (size_t i = 0; i + levelIndex <= data.levels.size() && i < levelButtonCount; ++i) {
       lvlButtons[i]->render();
    }
