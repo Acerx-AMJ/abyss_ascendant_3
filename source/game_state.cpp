@@ -15,14 +15,14 @@ GameState::GameState() {
    restartButton.init(getTexture("restart"), {70.0f, 70.0f});
 
    Font font = getFont("slackey");
-   continueText = Text::make(font, "CONTINUE", 50.0f);
-   restartText = Text::make(font, "RESTART", 50.0f);
-   menuText = Text::make(font, "MAIN MENU", 50.0f);
+   continueText = Text::make({500.0f, 100.0f}, font, "CONTINUE", 50.0f);
+   restartText = Text::make({500.0f, 100.0f}, font, "RESTART", 50.0f);
+   menuText = Text::make({500.0f, 100.0f}, font, "MAIN MENU", 50.0f);
    pauseNavig.addElements({continueText, restartText, menuText});
 
-   wonNextText = Text::make(font, "NEXT", 50.0f);
-   wonRestartText = Text::make(font, "RESTART", 50.0f);
-   wonMenuText = Text::make(font, "MAIN MENU", 50.0f);
+   wonNextText = Text::make({500.0f, 100.0f}, font, "NEXT", 50.0f);
+   wonRestartText = Text::make({500.0f, 100.0f}, font, "RESTART", 50.0f);
+   wonMenuText = Text::make({500.0f, 100.0f}, font, "MAIN MENU", 50.0f);
    wonNavig.addElements({wonNextText, wonRestartText, wonMenuText});
 
    Shader blurShader = getShader("blur");
@@ -68,9 +68,13 @@ void GameState::updateResponsiveness() {
    pauseButton.position = {cr * 55.0f, GetScreenHeight() - cr * 55.0f};
    restartButton.position = {cr * 145.0f, GetScreenHeight() - cr * 55.0f};
 
-   continueText->position = wonNextText->position    = {cr * 100.0f, cr * 300.0f};
-   restartText->position  = wonRestartText->position = {cr * 100.0f, cr * 400.0f};
-   menuText->position     = wonMenuText->position    = {cr * 100.0f, cr * 500.0f};
+   continueText->textPosition = wonNextText->textPosition    = {cr * 100.0f, cr * 300.0f};
+   restartText->textPosition  = wonRestartText->textPosition = {cr * 100.0f, cr * 400.0f};
+   menuText->textPosition     = wonMenuText->textPosition    = {cr * 100.0f, cr * 500.0f};
+
+   continueText->position = wonNextText->position    = {cr * 250.0f, cr * 300.0f};
+   restartText->position  = wonRestartText->position = {cr * 250.0f, cr * 400.0f};
+   menuText->position     = wonMenuText->position    = {cr * 250.0f, cr * 500.0f};
 
    if (pausedTexture.id != 0) {
       UnloadRenderTexture(pausedTexture);
@@ -337,7 +341,7 @@ void GameState::renderPausedState() {
    pauseNavig.render();
 
    if (pauseNavig.anySelected()) {
-      drawPointer(getTexture("lotus"), pauseNavig.getSelectedElement()->position, true);
+      drawPointer(getTexture("lotus_blue"), pauseNavig.getSelectedElement()->position, true);
    }
 }
 
@@ -352,7 +356,7 @@ void GameState::renderWonState() {
    wonNavig.render();
 
    if (wonNavig.anySelected() && (!wonNextText->disabled || wonNavig.getSelected<Text>() != wonNextText)) {
-      drawPointer(getTexture("lotus"), wonNavig.getSelectedElement()->position, true);
+      drawPointer(getTexture("lotus_blue"), wonNavig.getSelectedElement()->position, true);
    }
 
    if (wonNextText->disabled) {

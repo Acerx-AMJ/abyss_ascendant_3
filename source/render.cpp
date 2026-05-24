@@ -239,30 +239,34 @@ void Button::render() {
    }
 }
 
-Text *Text::make(Font font, const std::string &text, float fontSize) {
+Text *Text::make(Vector2 size, Font font, const std::string &text, float fontSize) {
    Text *element = new Text();
-   element->init(font, text, fontSize);
+   element->init(size, font, text, fontSize);
    return element;
 }
 
-void Text::init(Font font, const std::string &text, float fontSize) {
+void Text::init(Vector2 size, Font font, const std::string &text, float fontSize) {
+   this->size = size;
    this->font = font;
    this->text = text;
    this->fontSize = fontSize;
 }
 
 void Text::update(bool navigHovering, bool navigDown, bool navigClicked) {
-   size = getTextSize(font, text.c_str(), getFontSize(fontSize), getFontSize(1.0f));
-   position.x += size.x / 2.0f;
    updateInternalState(navigHovering, navigDown, navigClicked);
-   position.x -= size.x / 2.0f;
 
-   Color target = hovering ? WHITE : fadedTextColor;
-   color = ColorLerp(color, target, GetFrameTime() * 5.0f);
+   if (hovering) {
+      transition = fmin(1.0f, transition + GetFrameTime() * 5.0f);
+   }
+   else {
+      transition = fmax(0.0f, transition - GetFrameTime() * 5.0f);
+   }
 }
 
 void Text::render() {
-   drawTextSemiCentered(font, position, text.c_str(), fontSize * scale, color);
+   Vector2 scaled = size * getCubicRatio();
+   DrawRectangleV(position - getOrigin(scaled), scaled, Fade(ColorLerp(BLACK, BLUE, transition), 0.25f));
+   drawTextSemiCentered(font, textPosition, text.c_str(), fontSize * scale, ColorLerp({120, 120, 120, 255}, WHITE, transition));
 }
 
 TextureRect *TextureRect::make(Texture texture, Vector2 size) {
@@ -300,96 +304,6 @@ void TextureRect::render() {
    }
 
    drawTextureCentered(texture, position, Vector2Scale(size, scale * getCubicRatio()), WHITE);
-}
-
-TextInput *TextInput::make(Texture texture, Vector2 size, Font font, const std::string &fallback, size_t maxChars, float fontSize) {
-   TextInput *input = new TextInput();
-   input->init(texture, size, font, fallback, maxChars, fontSize);
-   return input;
-}
-
-void TextInput::init(Texture texture, Vector2 size, Font font, const std::string &fallback, size_t maxChars, float fontSize) {
-   this->texture = texture;
-   this->size = size;
-   this->font = font;
-   this->fallback = fallback;
-   this->maxChars = maxChars;
-   this->fontSize = fontSize;
-}
-
-void TextInput::update(bool navigHovering, bool navigDown, bool navigClicked) {
-   Vector2 mouse = GetMousePosition();
-   Vector2 scaledSize = Vector2Scale(size, getCubicRatio());
-   Vector2 realPosition = Vector2Subtract(position, getOrigin(scaledSize));
-   bool actuallyHovering = CheckCollisionPointRec(mouse, getRectangle(realPosition, scaledSize));
-   bool wasHovering = hovering;
-
-   hovering = actuallyHovering || navigHovering;
-   down = navigDown || (actuallyHovering && IsMouseButtonDown(MOUSE_BUTTON_LEFT));
-   clicked = navigClicked || (actuallyHovering && IsMouseButtonPressed(MOUSE_BUTTON_LEFT));
-   setMouseOnUI(actuallyHovering);
-
-   float dt = GetFrameTime();
-   if (active) {
-      scale = fminf(scale + dt, scaleMax);
-   }
-   else {
-      scale = fmaxf(scale - dt, 1.0f);
-   }
-   
-   if (!wasHovering && hovering) {
-      playSound("hover");
-   }
-
-   if (clicked) {
-      playSound("click");
-   }
-
-   setInputBlocking(false);
-   if (clicked) {
-      active = !active;
-   }
-   else if (active && ((!actuallyHovering && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-      || isKeyPressed(KEY_ENTER) || isKeyPressed(KEY_ESCAPE))) {
-      active = false;
-   }
-
-   changed = false;
-
-   if (!active) {
-      return;
-   }
-
-   if (!text.empty() && (isKeyRepeated(KEY_BACKSPACE) || isKeyRepeated(KEY_DELETE))) {
-      if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
-         do {
-            text.pop_back();
-         } while (!text.empty() && !isspace(text.back()));
-      }
-      else {
-         text.pop_back();
-      }
-      changed = true;
-   }
-
-   for (char c = GetCharPressed(); c != 0 && text.size() < maxChars; c = GetCharPressed()) {
-      text.push_back(c);
-      changed = true;
-   }
-   setInputBlocking(true);
-}
-
-void TextInput::render() {
-   drawTextureCentered(texture, position, Vector2Scale(size, scale * getCubicRatio()), WHITE);
-
-   Color tint = WHITE;
-   if (active) {
-      unsigned char value = std::sin(GetTime() * 20.0f) * 55.0f + 200.0f;
-      tint = {value, value, value, 255};
-   }
-
-   std::string displayText = text.empty() ? fallback : text;
-   drawTextCentered(font, position, displayText.c_str(), fontSize * scale, tint);
 }
 
 void destroy(UIElement *element) {

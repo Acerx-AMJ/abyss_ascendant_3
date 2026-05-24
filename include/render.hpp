@@ -75,19 +75,18 @@ struct Button: public UIElement {
    float fontSize = 0.0f;
 };
 
-constexpr Color fadedTextColor = {120, 120, 120, 255};
-
 struct Text: public UIElement {
-   static Text *make(Font font, const std::string &text, float fontSize);
-   void init(Font font, const std::string &text, float fontSize);
+   static Text *make(Vector2 size, Font font, const std::string &text, float fontSize);
+   void init(Vector2 size, Font font, const std::string &text, float fontSize);
 
    void update(bool navigHovering = false, bool navigDown = false, bool navigClicked = false) override;
    void render() override;
 
-   Color color = fadedTextColor;
+   Vector2 textPosition;
    Font font;
    std::string text;
    float fontSize = 0.0f;
+   float transition = 0.0f;
 };
 
 struct TextureRect: public UIElement {
@@ -100,22 +99,6 @@ struct TextureRect: public UIElement {
 
    Texture texture;
    Color color;
-};
-
-struct TextInput: public UIElement {
-   static TextInput *make(Texture texture, Vector2 size, Font font, const std::string &fallback, size_t maxChars, float fontSize);
-   void init(Texture texture, Vector2 size, Font font, const std::string &fallback, size_t maxChars, float fontSize);
-
-   void update(bool navigHovering = false, bool navigDown = false, bool navigClicked = false) override;
-   void render() override;
-
-   Font font;
-   Texture texture;
-   std::string text, fallback;
-   size_t maxChars = (size_t)-1; // explicit overflow
-   float fontSize = 0.0f;
-   bool changed = false;
-   bool active = false;
 };
 
 void destroy(UIElement *element);

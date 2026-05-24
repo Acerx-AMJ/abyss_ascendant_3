@@ -9,32 +9,32 @@
 MenuState::MenuState() {
    Font font = getFont("slackey");
 
-   playButton = Text::make(font, "PLAY", 50.0f),
-   editorButton = Text::make(font, "EDITOR", 50.0f),
-   customizeButton = Text::make(font, "CUSTOMIZE", 50.0f),
-   optionsButton = Text::make(font, "OPTIONS", 50.0f);
-   quitButton = Text::make(font, "QUIT", 50.0f);
+   playButton = Text::make({600.0f, 100.0f}, font, "PLAY", 50.0f),
+   editorButton = Text::make({600.0f, 100.0f}, font, "EDITOR", 50.0f),
+   customizeButton = Text::make({600.0f, 100.0f}, font, "CUSTOMIZE", 50.0f),
+   optionsButton = Text::make({600.0f, 100.0f}, font, "OPTIONS", 50.0f);
+   quitButton = Text::make({600.0f, 100.0f}, font, "QUIT", 50.0f);
    titleButtons.addElements({playButton, editorButton, customizeButton, optionsButton, quitButton});
 
    for (size_t i = 0; i < chapterCount; ++i) {
       if (i != 0 && !getChapterData(i - 1).completed) {
-         chapterButtons[i] = Text::make(font, toRomanNumeral(i+1) + ": ???", 50.0f);
+         chapterButtons[i] = Text::make({600.0f, 75.0f}, font, toRomanNumeral(i+1) + ": ???", 50.0f);
          chapterButtons[i]->disabled = true;
       }
       else {
-         chapterButtons[i] = Text::make(font, toRomanNumeral(i+1) + ": " + getChapterCodeName(i), 50.0f);
+         chapterButtons[i] = Text::make({600.0f, 75.0f}, font, toRomanNumeral(i+1) + ": " + getChapterCodeName(i), 50.0f);
       }
    }
 
-   endlessButton = Text::make(font, "ENDLESS", 50.0f);
-   freePlayButton = Text::make(font, "FREE-PLAY", 50.0f);
-   backButton = Text::make(font, "BACK", 50.0f);
+   endlessButton = Text::make({600.0f, 75.0f}, font, "ENDLESS", 50.0f);
+   freePlayButton = Text::make({600.0f, 75.0f}, font, "FREE-PLAY", 50.0f);
+   backButton = Text::make({600.0f, 75.0f}, font, "BACK", 50.0f);
    gameModeSelectionButtons.addElements({chapterButtons[0], chapterButtons[1], chapterButtons[2],
       chapterButtons[3], chapterButtons[4], chapterButtons[5], chapterButtons[6], endlessButton,
       freePlayButton, backButton});
 
    for (size_t i = 0; i < levelButtonCount; ++i) {
-      lvlButtons[i] = Text::make(font, "", 50.0f);
+      lvlButtons[i] = Text::make({550.0f, 75.0f}, font, "", 50.0f);
    }
 
    levelButtons.addElements({lvlButtons[0], lvlButtons[1], lvlButtons[2], lvlButtons[3], lvlButtons[4],
@@ -49,22 +49,34 @@ MenuState::MenuState() {
 void MenuState::updateResponsiveness() {
    float cr = getCubicRatio();
 
-   playButton->position = {cr * 125.0f, cr * 300.0f};
-   editorButton->position = {cr * 125.0f, cr * 400.0f};
-   customizeButton->position = {cr * 125.0f, cr * 500.0f};
-   optionsButton->position = {cr * 125.0f, cr * 600.0f};
-   quitButton->position = {cr * 125.0f, cr * 700.0f};
+   playButton->textPosition = {cr * 125.0f, cr * 300.0f};
+   editorButton->textPosition = {cr * 125.0f, cr * 400.0f};
+   customizeButton->textPosition = {cr * 125.0f, cr * 500.0f};
+   optionsButton->textPosition = {cr * 125.0f, cr * 600.0f};
+   quitButton->textPosition = {cr * 125.0f, cr * 700.0f};
+
+   playButton->position = {cr * 300.0f, cr * 300.0f};
+   editorButton->position = {cr * 300.0f, cr * 400.0f};
+   customizeButton->position = {cr * 300.0f, cr * 500.0f};
+   optionsButton->position = {cr * 300.0f, cr * 600.0f};
+   quitButton->position = {cr * 300.0f, cr * 700.0f};
 
    for (size_t i = 0; i < chapterCount; ++i) {
-      chapterButtons[i]->position = {cr * 125.0f, cr * (225.0f + 75.0f * i)};
+      chapterButtons[i]->textPosition = {cr * 125.0f, cr * (225.0f + 75.0f * i)};
+      chapterButtons[i]->position = {cr * 300.0f, cr * (225.0f + 75.0f * i)};
    }
 
-   endlessButton->position = {cr * 125.0f, cr * 750.0f};
-   freePlayButton->position = {cr * 125.0f, cr * 825.0f};
-   backButton->position = {cr * 125.0f, cr * 900.0f};
+   endlessButton->textPosition = {cr * 125.0f, cr * 750.0f};
+   freePlayButton->textPosition = {cr * 125.0f, cr * 825.0f};
+   backButton->textPosition = {cr * 125.0f, cr * 900.0f};
+
+   endlessButton->position = {cr * 300.0f, cr * 750.0f};
+   freePlayButton->position = {cr * 300.0f, cr * 825.0f};
+   backButton->position = {cr * 300.0f, cr * 900.0f};
 
    for (size_t i = 0; i < levelButtonCount; ++i) {
-      lvlButtons[i]->position = {cr * 125.0f, cr * (225.0f + 75.0f * i)};
+      lvlButtons[i]->textPosition = {cr * 125.0f, cr * (225.0f + 75.0f * i)};
+      lvlButtons[i]->position = {cr * 275.0f, cr * (225.0f + 75.0f * i)};
    }
 }
 
@@ -311,7 +323,7 @@ void MenuState::renderTitleState() {
    titleButtons.render();
 
    if (titleButtons.anySelected()) {
-      drawPointer(getTexture("lotus"), titleButtons.getSelectedElement()->position, true);
+      drawPointer(getTexture("lotus_blue"), titleButtons.getSelectedElement()->position, true);
    }
 }
 
@@ -335,7 +347,7 @@ void MenuState::renderGameModeSelectionState() {
    }
 
    if (gameModeSelectionButtons.anySelected()) {
-      drawPointer(getTexture("lotus"), gameModeSelectionButtons.getSelectedElement()->position, true);
+      drawPointer(getTexture("lotus_blue"), gameModeSelectionButtons.getSelectedElement()->position, true);
    }
 }
 
@@ -371,6 +383,6 @@ void MenuState::renderLevelSelectionState() {
    }
 
    if (levelButtons.anySelected()) {
-      drawPointer(getTexture("lotus"), levelButtons.getSelectedElement()->position, true);
+      drawPointer(getTexture("lotus_blue"), levelButtons.getSelectedElement()->position, true);
    }
 }

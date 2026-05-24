@@ -90,11 +90,12 @@ void spawnCoinParticles(const Vector2 &position, Texture *texture) {
 }
 
 void spawnStarParticles(const Vector2 &position) {
+   float cr = getCubicRatio();
    spawnParticles({
       &getTexture("star"),
       position - V2(25.0f) * getCubicRatio(),
-      V2(-500.0f),
-      V2(0.0f, 500.0f),
+      V2(-500.0f) * cr,
+      V2(0.0f, 500.0f) * cr,
       V2(25.0f),
       0.92f,
       0.0f,
@@ -103,8 +104,8 @@ void spawnStarParticles(const Vector2 &position) {
    }, {
       &getTexture("star"),
       position + V2(25.0f) * getCubicRatio(),
-      V2(500.0f),
-      V2(0.0f, 1000.0f),
+      V2(500.0f) * cr,
+      V2(0.0f, 1000.0f) * cr,
       V2(35.0f),
       0.98f,
       360.0f,
@@ -114,11 +115,12 @@ void spawnStarParticles(const Vector2 &position) {
 }
 
 void spawnConfetti() {
+   float cr = getCubicRatio();
    spawnParticles({
       nullptr,
       V2(0.0f, -400.0f * getCubicRatio()),
-      V2(-400.0f),
-      V2(0.0f, 200.0f),
+      V2(-400.0f) * cr,
+      V2(0.0f, 200.0f) * cr,
       V2(12.0f),
       0.92f,
       0.0f,
@@ -127,8 +129,8 @@ void spawnConfetti() {
    }, {
       nullptr,
       V2((float)GetScreenWidth(), 0.0f),
-      V2(400.0f),
-      V2(0.0f, 400.0f),
+      V2(400.0f) * cr,
+      V2(0.0f, 400.0f) * cr,
       V2(24.0f),
       0.98f,
       360.0f,
