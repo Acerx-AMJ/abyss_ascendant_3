@@ -43,6 +43,9 @@ private:
    size_t levelID = 0;
    size_t levelIndex = 0;
    bool levelSelected = false;
+   bool draggingScrollbar = false;
+   Vector2 dragOffset;
+   size_t dragStartIndex = 0;
 
    bool endlessSelected = false;
    bool freePlaySelected = false;

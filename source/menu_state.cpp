@@ -171,6 +171,8 @@ void MenuState::updateGameModeSelectionState() {
 void MenuState::updateLevelSelectionState() {
    ChapterData &data = getChapterData(chapterID);
    size_t last = std::min(levelButtonCount, data.levels.size() + 1);
+   size_t lastView = (data.levels.size() < levelButtonCount ? 0 : data.levels.size() - levelButtonCount + 1);
+
    levelButtons.updateKey(levelButtons.up);
    levelButtons.updateKey(levelButtons.down);
    levelButtons.updateKey(levelButtons.tab);
@@ -184,7 +186,7 @@ void MenuState::updateLevelSelectionState() {
       }
 
       if (levelButtons.index == last) {
-         levelIndex = (data.levels.size() < levelButtonCount ? 0 : data.levels.size() - levelButtonCount + 1);
+         levelIndex = lastView;
       }
    }
 
@@ -206,6 +208,7 @@ void MenuState::updateLevelSelectionState() {
 
    for (size_t i = 0; i + levelIndex <= data.levels.size() && i < levelButtonCount; ++i) {
       Text *button = lvlButtons[i];
+      button->disabled = false;
       bool selected = (i + 1 == levelButtons.index);
 
       if (i + levelIndex == data.levels.size()) {
@@ -214,7 +217,14 @@ void MenuState::updateLevelSelectionState() {
          }
          continue;
       }
+
       Level &level = getLevel(data.levels[levelIndex + i]);
+      if (level.ID != 0 && !getLevelData(level.ID - 1).completed) {
+         button->disabled = true;
+         updateLevelButton(button, "???", selected);
+         continue;         
+      }
+      
       button->ID = level.ID;
       if (updateLevelButton(button, level.name, selected)) {
          shouldPlayLevel = true;
@@ -240,11 +250,29 @@ void MenuState::updateLevelSelectionState() {
       levelSelected = true;
    }
 
+   float oneValue = GetScreenHeight() / float(data.levels.size() + 1);
+   float offset = levelIndex * oneValue;
+   float visible = fmin(data.levels.size() + 1, levelButtonCount) * oneValue;
+   float cr = getCubicRatio();
+
+   if (!draggingScrollbar && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), {550.0f * cr, offset, 50.0f * cr, visible})) {
+      dragOffset = GetMousePosition();
+      draggingScrollbar = true;
+      dragStartIndex = levelIndex;
+   }
+   else if (draggingScrollbar && !IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      draggingScrollbar = false;
+   }
+   else if (draggingScrollbar && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      float delta = GetMouseY() - dragOffset.y;
+      levelIndex = fmin(lastView, fmax(dragStartIndex + delta / oneValue, 0.0f));
+   }
+
    float scroll = GetMouseWheelMove();
-   if (scroll >= 0.5f && levelIndex > 0) {
+   if (!draggingScrollbar && scroll >= 0.5f && levelIndex > 0) {
       levelIndex -= 1;
    }
-   else if (scroll <= -0.5f && levelIndex + levelButtonCount <= data.levels.size()) {
+   else if (!draggingScrollbar && scroll <= -0.5f && levelIndex + levelButtonCount <= data.levels.size()) {
       levelIndex += 1;
    }
 
