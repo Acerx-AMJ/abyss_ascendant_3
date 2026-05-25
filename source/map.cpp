@@ -180,7 +180,7 @@ void Map::render(Player &player, const Rectangle &bounds, bool paused) {
       }
    }
 
-   renderParticles(getCoinParticleCluster());
+   renderParticles(coinParticles);
    player.render();
 }
 

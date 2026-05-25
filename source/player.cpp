@@ -204,7 +204,7 @@ void Player::render() {
 
    BeginShaderMode(shader);
       if (died) {
-         renderParticles(getPlayerDeathParticleCluster());
+         renderParticles(deathParticles);
       }
       else {
          for (int i = shadowCount - 1; shadowsEnabled && i >= 0; --i) {

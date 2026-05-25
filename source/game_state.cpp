@@ -386,7 +386,7 @@ void GameState::renderWonState() {
       }
       drawTextureCentered(texture, position, V2(110.0f) * cr * starScales[i], WHITE, rotation);
    }
-   renderParticles(getStarParticleCluster());
+   renderParticles(starParticles);
 
    resultColorFade += GetFrameTime() * 3.0f;
    if (resultColorFade >= 1.0f) {
@@ -404,5 +404,5 @@ void GameState::renderWonState() {
    if (map.coinCount <= map.collectedCoins) {
       drawTextCentered(font, V2(1400.0f, 500.0f) * cr, TextFormat("%05.2f", gameTime), 60.0f, {255, 125, 0, 255});
    }
-   renderParticles(getConfettiCluster());
+   renderParticles(confettiParticles);
 }
