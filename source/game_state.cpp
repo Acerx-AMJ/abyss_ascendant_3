@@ -156,10 +156,6 @@ void GameState::fixedUpdate() {
          playSound("horn");
          startCountingTime = true;
       }
-
-      if (startCountingTime) {
-         gameTime += fixedUpdateDeltaTime;
-      }
    }
    cameraUI.update();
    camera.update();
@@ -178,6 +174,10 @@ void GameState::updatePlayingState() {
    if (restartButton.clicked || handleKeyPressWithSound(KEY_R)) {
       shouldRestart = true;
       fadingOut = true;
+   }
+
+   if (startCountingTime) {
+      gameTime += GetFrameTime();
    }
 
    pausedTimer = fmax(0.0f, pausedTimer - GetFrameTime() * 2.0f);

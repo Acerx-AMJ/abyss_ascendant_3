@@ -17,6 +17,7 @@ void State::updateStateLogic() {
 
    if (fadingIn) {
       updateFadingIn();
+      update();
    }
    else if (fadingOut) {
       updateFadingOut();
