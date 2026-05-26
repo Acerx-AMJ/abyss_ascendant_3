@@ -11,7 +11,14 @@ void Enemy::init(Rectangle bounds) {
 
    switch (ai) {
    case EnemyAI::horizontal:
-      direction.x = (chance(50) ? 1.0f : 1.0f);
+      direction.x = (chance(50) ? 1.0f : -1.0f);
+   case EnemyAI::vertical:
+      direction.y = (chance(50) ? 1.0f : -1.0f);
+   case EnemyAI::diagonal:
+      direction.x = (chance(50) ? 1.0f : -1.0f);
+      direction.y = (chance(50) ? 1.0f : -1.0f);
+   case EnemyAI::straight:
+      break;
    }
 }
 
@@ -25,6 +32,24 @@ void Enemy::update(Map &map, Rectangle playerBounds, bool &playerDied) {
          direction.x *= -1.0f;
       }
       directionX = direction.x;
+   case EnemyAI::vertical:
+      if (collisionY) {
+         direction.y *= -1.0f;
+      }
+      directionY = direction.y;
+   case EnemyAI::diagonal:
+      if (collisionX) {
+         direction.x *= -1.0f;
+      }
+
+      if (collisionY) {
+         direction.y *= -1.0f;
+      }
+      directionX = direction.x;
+      directionY = direction.y;
+   case EnemyAI::straight:
+      directionX = (playerBounds.x + playerBounds.width / 2.0f) - position.x;
+      directionY = (playerBounds.y + playerBounds.height / 2.0f) - position.y;
    }
 
    collisionX = false;

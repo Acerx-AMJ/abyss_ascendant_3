@@ -38,6 +38,6 @@ texture=lock
 
 type=enemy
 texture=bat
-ai=horizontal
-width=2
+ai=straight
+speed=1
 [END]
