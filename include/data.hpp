@@ -49,12 +49,18 @@ struct Animation {
    bool randomAnimationStart = false;
 };
 
+enum class EnemyAI: char {
+   horizontal, vertical, diagonal, straight, pathfind
+};
+
 struct Tile {
    enum class TileType: char {root, ghost, none};
-   enum class Type: char {solid, coin, finish, deadly};
+   enum class Type: char {solid, coin, finish, deadly, enemy};
 
    TileType tileType = TileType::none;
    Type type = Type::solid;
+   EnemyAI enemyAI;
+   float enemySpeed = 0.0f;
    size_t ID = 0;
    size_t width = 0;
    size_t height = 0;

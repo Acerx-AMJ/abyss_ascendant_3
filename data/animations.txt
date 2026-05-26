@@ -19,3 +19,11 @@ frames=8
 speed=0.125
 randomStartOffset=false
 [END]
+
+texture=bat
+width=16
+height=16
+frames=4
+speed=0.15
+variations=8
+[END]

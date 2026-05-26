@@ -116,6 +116,11 @@ void GameState::update() {
 void GameState::fixedUpdate() {
    if (state != State::paused && state != State::won) {
       player.update(map);
+      Rectangle playerBounds = getRectangle(player.position - getOrigin(playerSize), playerSize);
+
+      for (Enemy &enemy: map.enemies) {
+         enemy.update(map, playerBounds, player.died);
+      }
 
       if (player.finished) {
          playSound("win");

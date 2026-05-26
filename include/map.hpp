@@ -1,5 +1,6 @@
 #pragma once
 #include "data.hpp"
+#include "enemy.hpp"
 #include <unordered_set>
 
 struct Level;
@@ -35,6 +36,7 @@ struct Map {
    size_t sizeY = 0;
    float time = 0.0f;
    float perfectTime = 0.0f;
+   std::vector<Enemy> enemies;
    std::vector<std::vector<Tile>> tiles;
    std::vector<std::vector<Tile>> floor;
    std::unordered_set<Vector2, Vector2Hash> drawnRootTiles;

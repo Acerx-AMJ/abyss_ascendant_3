@@ -3,6 +3,7 @@
 #include "math.hpp"
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <unordered_map>
 #include "raymath.h"
@@ -213,13 +214,13 @@ void loadTiles() {
          getFieldAsSimpleValue(stream, value, line, tile.height);
       }
       else if (field == "type") {
-         const static std::unordered_map<std::string, Tile::Type> tileTypes {{
+         const static std::map<std::string, Tile::Type> tileTypes {{
             {"solid", Tile::Type::solid}, {"coin", Tile::Type::coin}, {"finish", Tile::Type::finish},
-            {"deadly", Tile::Type::deadly}
+            {"deadly", Tile::Type::deadly}, {"enemy", Tile::Type::enemy}
          }};
 
-         if (tileTypes.count(value)) {
-            tile.type = tileTypes.at(value);
+         if (auto type = tileTypes.find(value); type != tileTypes.end()) {
+            tile.type = type->second;
          }
          else {
             printf("WARNING: Malformed line: '%s'. Invalid type '%s'.\n", line.c_str(), value.c_str());
@@ -228,6 +229,23 @@ void loadTiles() {
       else if (field == "texture") {
          tile.texture.name = value;
          tileNameMap[value] = tileContainer.size();
+      }
+      else if (field == "speed") {
+         getFieldAsSimpleValue(stream, value, line, tile.enemySpeed);
+      }
+      else if (field == "ai") {
+         const static std::map<std::string, EnemyAI> enemyAIs {{
+            {"horizontal", EnemyAI::horizontal}, {"vertical", EnemyAI::vertical},
+            {"diagonal", EnemyAI::diagonal}, {"straight", EnemyAI::straight},
+            {"pathfind", EnemyAI::pathfind}
+         }};
+
+         if (auto ai = enemyAIs.find(value); ai != enemyAIs.end()) {
+            tile.enemyAI = ai->second;
+         }
+         else {
+            printf("WARNING: Malformed line: '%s'. Invalid AI '%s'.\n", line.c_str(), value.c_str());
+         }
       }
       else {
          printf("WARNING: Malformed line: '%s'. Unexpected field '%s'.\n", line.c_str(), field.c_str());

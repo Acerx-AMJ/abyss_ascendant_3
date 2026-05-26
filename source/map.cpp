@@ -47,6 +47,18 @@ void Map::init(const Level &level, CameraAA3 &camera, Player &player) {
             continue;
          }
 
+         if (tile.type == Tile::Type::enemy) {
+            Enemy enemy;
+            enemy.ai = tile.enemyAI;
+            enemy.size = V2(tile.width, tile.height) * tileSize;
+            enemy.position = V2(x, y) * tileSize + getOrigin(enemy.size);
+            enemy.speed = tile.enemySpeed;
+            enemy.init(bounds);
+            initAnimationIfExists(enemy.texture, tile.texture.name);
+            enemies.push_back(enemy);
+            continue;
+         }
+
          tiles[y][x] = tile;
          tiles[y][x].tileType = Tile::TileType::root;
          coinCount += (tile.type == Tile::Type::coin);
@@ -117,7 +129,7 @@ void Map::init(const Level &level, CameraAA3 &camera, Player &player) {
    }
 
    Vector2 spawnPosition = randomVectorAccess(spawnPositions);
-   player.position = Vector2Add(spawnPosition, getOrigin(playerSize));
+   player.position = spawnPosition + getOrigin(playerSize);
    player.init(bounds, getCustomizationData());
    camera.init(&player, bounds, spawnPosition, getLevelData(level.ID).zoom, 0.25f, 4.0f);
    camera.update();
@@ -181,6 +193,9 @@ void Map::render(Player &player, const Rectangle &bounds, bool paused) {
    }
 
    renderParticles(coinParticles);
+   for (Enemy &enemy: enemies) {
+      enemy.render();
+   }
    player.render();
 }
 

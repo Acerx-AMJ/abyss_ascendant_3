@@ -7,7 +7,9 @@
 #texture=my_tile  # Texture. "assets/sprites/my_tile.png" -> "my_tile"
 width=1           # Width of the tile in tiles
 height=1          # Height of the tile in tiles
-type=solid        # Type of the tile - solid, coin, finish, deadly
+type=solid        # Type of the tile - solid, coin, finish, deadly, enemy
+ai=horizontal     # AI of enemy - horizontal, vertical, diagonal, straight, pathfind
+speed=5.0         # Speed of enemy. Player speed is 5
 [END]
 
 texture=visible
@@ -32,4 +34,10 @@ height=4
 
 type=deadly
 texture=lock
+[END]
+
+type=enemy
+texture=bat
+ai=horizontal
+width=2
 [END]
