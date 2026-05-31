@@ -4,7 +4,7 @@
 struct Enemy {
    void init(Rectangle bounds);
    void update(struct Map &map, Rectangle playerBounds, bool &playerDied); // fixedUpdate
-   void render();
+   void render(bool paused);
 
    EnemyAI ai;
    Rectangle bounds;

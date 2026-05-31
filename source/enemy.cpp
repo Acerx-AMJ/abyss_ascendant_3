@@ -54,6 +54,10 @@ void Enemy::update(Map &map, Rectangle playerBounds, bool &playerDied) {
       directionY = direction.y;
       break;
    case EnemyAI::straight:
+      if (playerDied) {
+         return;
+      }
+
       directionX = (playerBounds.x + playerBounds.width / 2.0f) - position.x;
       directionY = (playerBounds.y + playerBounds.height / 2.0f) - position.y;
       break;
@@ -160,6 +164,6 @@ void Enemy::update(Map &map, Rectangle playerBounds, bool &playerDied) {
    }
 }
 
-void Enemy::render() {
-   drawTextureAnimatedCentered(texture, position, size, WHITE);
+void Enemy::render(bool paused) {
+   drawTextureAnimatedCentered(texture, position, size, WHITE, paused);
 }

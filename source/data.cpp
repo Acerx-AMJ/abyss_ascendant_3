@@ -1,4 +1,5 @@
 #include "data.hpp"
+#include "cutscene.hpp"
 #include "file.hpp"
 #include "math.hpp"
 #include <filesystem>
@@ -163,6 +164,45 @@ void loadLevels() {
          if (stream.rdbuf()->in_avail() != 0) {
             printf("WARNING: Malformed line: '%s'. Expected %lu number array. Fields 'width' and 'height' must be defined before fields 'floor' and 'map'.\n", line.c_str(), level.sizeX * level.sizeY);
          }
+      }
+      else if (field == "cutscenes") {
+         Cutscene action;
+         stream.clear();
+         stream.str(value);
+
+         std::string condition;
+         stream >> condition;
+
+         const static std::map<std::string, Cutscene::Condition> conditions {{
+            {"start", Cutscene::Condition::start}, {"finish", Cutscene::Condition::finish},
+            {"death", Cutscene::Condition::death}
+         }};
+
+         if (auto type = conditions.find(condition); type != conditions.end()) {
+            action.condition = type->second;
+         }
+         else {
+            printf("WARNING: Malformed line: '%s'. Invalid cutscene condition '%s'.\n", line.c_str(), condition.c_str());
+         }
+
+         std::string next;
+         while (stream >> next) {
+            CutsceneCommand command;
+            if (next == "dialogue") {
+               command.type = CutsceneCommand::Type::dialogue;
+               stream >> command.NPCID;
+
+               command.dialogue.reserve(50);
+               while ((stream >> next) && next != "$") {
+                  command.dialogue += next + ' ';
+               }
+               action.commands.push_back(command);
+            }
+            else {
+               printf("WARNING: Malformed line: '%s'. Invalid cutscene command '%s'.\n", line.c_str(), next.c_str());
+            }
+         }
+         level.cutscenes.push_back(pushCutscene(action));
       }
       else {
          printf("WARNING: Malformed line: '%s'. Unexpected field '%s'.\n", line.c_str(), field.c_str());

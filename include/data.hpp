@@ -30,6 +30,7 @@ struct Level {
    float perfectTime = 0.0f;
    std::vector<std::vector<size_t>> floor;
    std::vector<std::vector<size_t>> map;
+   std::vector<size_t> cutscenes;
 };
 
 struct TextureAA3 {

@@ -142,6 +142,7 @@ void Map::init(const Level &level, CameraAA3 &camera, Player &player) {
    sizeY = level.sizeY;
    time = level.time;
    perfectTime = level.perfectTime;
+   cutscenes = level.cutscenes;
 }
 
 void Map::render(Player &player, const Rectangle &bounds, bool paused) {
@@ -194,7 +195,7 @@ void Map::render(Player &player, const Rectangle &bounds, bool paused) {
 
    renderParticles(coinParticles);
    for (Enemy &enemy: enemies) {
-      enemy.render();
+      enemy.render(paused);
    }
    player.render();
 }

@@ -51,6 +51,7 @@ void GameState::setup(const Level &level) {
 
    initAnimationIfExists(coinAnimation, level.coinTile);
    initAnimationIfExists(timerAnimation, level.timerTile);
+   playStartCutscene(map.cutscenes);
 }
 
 void GameState::calculateCameraBounds() {
@@ -116,6 +117,17 @@ void GameState::update() {
 
 void GameState::fixedUpdate() {
    if (isPlayingCutscene()) {
+      cameraUI.update();
+      camera.update();
+      calculateCameraBounds();
+      return;
+   }
+   else if (player.died && playerKilled) {
+      shouldRestart = true;
+      fadingOut = true;
+      cameraUI.update();
+      camera.update();
+      calculateCameraBounds();
       return;
    }
 
@@ -143,6 +155,7 @@ void GameState::fixedUpdate() {
             && starCount == 3, gameTime, camera.camera.zoom, starCount}, map.coinCount <= map.collectedCoins,
             map.levelID);
          wonNextText->disabled = (!getLevelData(map.levelID).completed && map.levelID != getLevelCount() - 1);
+         playFinishCutscene(map.cutscenes);
       }
 
       if (player.died && !playerKilled) {
@@ -153,14 +166,12 @@ void GameState::fixedUpdate() {
          cameraUI.shake(75.0f, 0.3f);
          startCountingTime = false;
          playerKilled = true;
-         shouldRestart = true;
-         fadingOut = true;
+         playDeathCutscene(map.cutscenes);
       }
 
       if (!player.died && !startCountingTime && (player.direction.x != 0.0f || player.direction.y != 0.0f)) {
          playSound("horn");
          startCountingTime = true;
-         playCutscene(1);
       }
    }
    cameraUI.update();
@@ -215,6 +226,11 @@ void GameState::updatePausedState() {
 }
 
 void GameState::updateWonState() {
+   if (isPlayingCutscene()) {
+      updateCutscene();
+      return;
+   }
+
    pausedTimer = fmin(1.0f, pausedTimer + GetFrameTime());
    wonNavig.update();
 
@@ -327,9 +343,11 @@ void GameState::render() {
       case State::won:     renderWonState();     break;
       }
 
-      if (state == State::won) {
+      if (state == State::won || isPlayingCutscene()) {
+         EndMode2D();
          return;
       }
+
       Font font = getFont("slackey");
       float cr = getCubicRatio();
       float down = GetScreenHeight() - 50.0f * cr;
@@ -367,6 +385,11 @@ void GameState::renderPausedState() {
 }
 
 void GameState::renderWonState() {
+   if (isPlayingCutscene()) {
+      renderCutscene();
+      return;
+   }
+
    Font font = getFont("slackey");
    float cr = getCubicRatio();
 

@@ -15,6 +15,7 @@ floor=0              # Floor tile IDs. Offset by 2 as 0 - empty and 1 - spawn po
 map=1                # Map tile IDs. Offset by 2 as 0 - empty and 1 - spawn point.
 time=5.0             # Time required for the third star.
 perfectTime=3.0      # Time required to perfect the level.
+#cutscenes=[]        # Cutscenes present in the level.
 [END]
 
 
@@ -25,7 +26,10 @@ chapter=0
 width=6
 height=5
 floor=2 0 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-map=1 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0
+map=1 0 0 7 0 0 0 0 3 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0
+cutscenes=start dialogue 0 Hey! this is my dialogue $ dialogue 0 this is message 2 $ dialogue 1 Hi! I'm joining in $ dialogue 1 How are you doing? $ dialogue 0 fine, what about you? $ dialogue 1 I'm doing good! just did this and this. $
+cutscenes=finish dialogue 1 you just finished the level $ dialogue 0 thanks, I know $
+cutscenes=death dialogue 1 wow, you died $ dialogue 0 yep. $
 [END]
 name=Shelf Life
 chapter=0

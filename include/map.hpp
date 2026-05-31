@@ -39,5 +39,6 @@ struct Map {
    std::vector<Enemy> enemies;
    std::vector<std::vector<Tile>> tiles;
    std::vector<std::vector<Tile>> floor;
+   std::vector<size_t> cutscenes;
    std::unordered_set<Vector2, Vector2Hash> drawnRootTiles;
 };

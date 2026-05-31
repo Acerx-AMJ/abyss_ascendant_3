@@ -1,32 +1,68 @@
 #include "cutscene.hpp"
 #include "asset.hpp"
 #include "render.hpp"
-#include <vector>
 
-static std::vector<std::vector<CutsceneCommand>> cutscenes;
+static std::vector<Cutscene> cutscenes;
 static size_t cutsceneID = 0;
 static size_t cutsceneAction = 0;
+static bool playingCutscene = false;
+
+size_t getCutsceneCount() {
+   return cutscenes.size();
+}
+
+size_t pushCutscene(Cutscene &cutscene) {
+   cutscenes.push_back(cutscene);
+   return cutscenes.size() - 1;
+}
+
+void playStartCutscene(std::vector<size_t> &cutscenes) {
+   for (size_t index: cutscenes) {
+      Cutscene &cutscene = ::cutscenes[index];
+      if (cutscene.condition == Cutscene::Condition::start) {
+         playingCutscene = (cutsceneID < cutscenes.size() && !cutscene.commands.empty());
+         cutsceneID = index;
+         break;
+      }
+   }
+}
+
+void playFinishCutscene(std::vector<size_t> &cutscenes) {
+   for (size_t index: cutscenes) {
+      Cutscene &cutscene = ::cutscenes[index];
+      if (cutscene.condition == Cutscene::Condition::finish) {
+         playingCutscene = (cutsceneID < cutscenes.size() && !cutscene.commands.empty());
+         cutsceneID = index;
+         break;
+      }
+   }
+}
+
+void playDeathCutscene(std::vector<size_t> &cutscenes) {
+   for (size_t index: cutscenes) {
+      Cutscene &cutscene = ::cutscenes[index];
+      if (cutscene.condition == Cutscene::Condition::death) {
+         playingCutscene = (cutsceneID < cutscenes.size() && !cutscene.commands.empty());
+         cutsceneID = index;
+         break;
+      }
+   }
+}
 
 void playCutscene(size_t cutsceneID) {
-   cutscenes.push_back({});
-   cutscenes.push_back({
-      {CutsceneCommand::Type::dialogue, 0, "Hey! this is my dialogue"},
-      {CutsceneCommand::Type::dialogue, 0, "this is message 2"},
-      {CutsceneCommand::Type::dialogue, 0, "and this is my final message..."},
-      {CutsceneCommand::Type::dialogue, 0, "stay safe"}
-   });
    ::cutsceneID = cutsceneID;
 }
 
 bool isPlayingCutscene() {
-   return cutsceneID != 0;
+   return playingCutscene;
 }
 
 void updateCutscene() {
    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       cutsceneAction += 1;
 
-      if (cutsceneAction >= cutscenes[cutsceneID].size()) {
+      if (cutsceneAction >= cutscenes[cutsceneID].commands.size()) {
+         playingCutscene = false;
          cutsceneID = 0;
          cutsceneAction = 0;
       }
@@ -34,7 +70,7 @@ void updateCutscene() {
 }
 
 void renderCutscene() {
-   if (cutsceneID != 0 && cutsceneAction < cutscenes[cutsceneID].size()) {
-      drawTextCentered(getFont("slackey"), getScreenCenter(), cutscenes[cutsceneID][cutsceneAction].dialogue.c_str(), 20.0f, WHITE);
+   if (playingCutscene) {
+      drawTextCentered(getFont("slackey"), getScreenCenter(), cutscenes[cutsceneID].commands[cutsceneAction].dialogue.c_str(), 35.0f, WHITE);
    }
 }
