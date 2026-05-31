@@ -1,5 +1,6 @@
 #include "game_state.hpp"
 #include "asset.hpp"
+#include "cutscene.hpp"
 #include "data.hpp"
 #include "file.hpp"
 #include "input.hpp"
@@ -114,6 +115,10 @@ void GameState::update() {
 }
 
 void GameState::fixedUpdate() {
+   if (isPlayingCutscene()) {
+      return;
+   }
+
    if (state != State::paused && state != State::won) {
       player.update(map);
       Rectangle playerBounds = getRectangle(player.position - getOrigin(playerSize), playerSize);
@@ -155,6 +160,7 @@ void GameState::fixedUpdate() {
       if (!player.died && !startCountingTime && (player.direction.x != 0.0f || player.direction.y != 0.0f)) {
          playSound("horn");
          startCountingTime = true;
+         playCutscene(1);
       }
    }
    cameraUI.update();
@@ -163,6 +169,11 @@ void GameState::fixedUpdate() {
 }
 
 void GameState::updatePlayingState() {
+   if (isPlayingCutscene()) {
+      updateCutscene();
+      return;
+   }
+
    pauseButton.update();
    restartButton.update();
 
@@ -332,6 +343,11 @@ void GameState::render() {
 }
 
 void GameState::renderPlayingState() {
+   if (isPlayingCutscene()) {
+      renderCutscene();
+      return;
+   }
+
    pauseButton.render();
    restartButton.render();
 }

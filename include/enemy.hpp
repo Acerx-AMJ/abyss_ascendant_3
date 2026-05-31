@@ -1,6 +1,4 @@
-#ifndef ENEMY_HPP
-#define ENEMY_HPP
-
+#pragma once
 #include "data.hpp"
 
 struct Enemy {
@@ -18,5 +16,3 @@ struct Enemy {
    bool collisionX = false;
    bool collisionY = false;
 };
-
-#endif
