@@ -1,13 +1,10 @@
-#include "state.hpp"
-#include "input.hpp"
-#include "particles.hpp"
+#include "state/state.hpp"
+#include "raylib.h"
 #include <cmath>
-#include <raylib.h>
 
 void State::updateStateLogic() {
    int width = GetScreenWidth();
    int height = GetScreenHeight();
-   updateInput();
 
    if (width != lastWidth || height != lastHeight) {
       lastWidth = width;
@@ -26,31 +23,49 @@ void State::updateStateLogic() {
       update();
    }
 
-   accumulator += fminf(maxDeltaTime, GetFrameTime());
-   while (accumulator >= fixedUpdateDeltaTime) {
+   realDT = GetFrameTime();
+   DT = fminf(realDT, maxDT);
+
+   accumulator += DT;
+   while (accumulator >= fixedUpdateDT) {
       fixedUpdate();
-      updateParticles();
-      accumulator -= fixedUpdateDeltaTime;
+      accumulator -= fixedUpdateDT;
    }
 }
 
+void State::renderState() {
+   BeginDrawing();
+      ClearBackground(BLACK);
+      render();
+      DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, alpha));
+   EndDrawing();
+}
+
+void State::quitState() {
+   fadingOut = true;
+}
+
+bool State::shouldChangeState() const {
+   return quittingState;
+}
+
 void State::updateFadingIn() {
-   fadeTimer += GetFrameTime();
-   alpha = 1.f - fadeTimer / fadeTime;
+   fadeTimer += realDT;
+   alpha = 1.0f - (fadeTimer / fadeTime);
 
    if (fadeTimer >= fadeTime) {
-      fadeTimer = 0.f;
-      alpha = 0.f;
+      fadeTimer = 0.0f;
+      alpha = 0.0f;
       fadingIn = false;
    }
 }
 
 void State::updateFadingOut() {
-   fadeTimer += GetFrameTime();
+   fadeTimer += realDT;
    alpha = fadeTimer / fadeTime;
 
    if (fadeTimer >= fadeTime) {
-      alpha = 1.f;
+      alpha = 1.0f;
       fadingOut = false;
       quittingState = true;
    }

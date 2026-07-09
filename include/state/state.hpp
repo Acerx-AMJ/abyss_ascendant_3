@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr float maxDeltaTime = 0.25f;
-constexpr float fixedUpdateDeltaTime = 1.0f / 60.0f;
+constexpr float maxDT = 0.25f;
+constexpr float fixedUpdateDT = 1.0f / 60.0f;
 constexpr float fadeTime = 0.4f;
 
 struct State {
@@ -15,9 +15,20 @@ struct State {
    virtual State *change() = 0;
 
    void updateStateLogic();
+   void renderState();
+
+   void quitState();
+   bool shouldChangeState() const;
+
+private:
    void updateFadingIn();
    void updateFadingOut();
 
+public:
+   float DT = 0.0f;
+   float realDT = 0.0f;
+
+private:
    int lastWidth = 0;
    int lastHeight = 0;
 

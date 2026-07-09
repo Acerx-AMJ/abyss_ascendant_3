@@ -13,3 +13,4 @@ TODO: fix this.
 Code is open-source on Github!
 Make sure to star the repository on Github!
 Now includes a loading screen!
+Using Fethur's EPIK-216 palette!

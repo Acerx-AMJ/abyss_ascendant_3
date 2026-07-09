@@ -1,16 +1,10 @@
-#include "asset.hpp"
-#include "data.hpp"
-#include "loading_state.hpp"
-#include "sound.hpp"
-#include <cstdlib>
-#include <ctime>
+#include "state/loadingState.hpp"
 #include <raylib.h>
 
 constexpr int minWindowWidth = 800;
 constexpr int minWindowHeight = 600;
 
 int main() {
-   srand(time(nullptr));
    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_MAXIMIZED);
    InitWindow(minWindowWidth, minWindowHeight, "Abyss Ascendant 3");
    SetWindowMinSize(minWindowWidth, minWindowHeight);
@@ -21,7 +15,7 @@ int main() {
    State *current = new LoadingState();
 
    while (!WindowShouldClose()) {
-      if (current->quittingState) {
+      if (current->shouldChangeState()) {
          State *newState = current->change();
          delete current;
          current = newState;
@@ -32,16 +26,9 @@ int main() {
       }
 
       current->updateStateLogic();
-      BeginDrawing();
-         ClearBackground(BLACK);
-         current->render();
-         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, current->alpha));
-      EndDrawing();
+      current->renderState();
    }
 
-   savePlayerData();
-   unloadSounds();
-   unloadAssets();
    CloseWindow();
    CloseAudioDevice();
 }
