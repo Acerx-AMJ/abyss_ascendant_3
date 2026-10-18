@@ -63,10 +63,10 @@ void updateEntities() {
 void renderEntity(Entity &entity) {
    switch (entity.type) {
    case EntityType::enemy:
-      drawTexture(getTexture("lock"), entity.position, entity.size, entity.color);
+      drawTexture(getTexture("lock"), entity.position, entity.size, TOP_LEFT, entity.color);
       break;
    case EntityType::player:
-      drawTexture(getTexture("player1"), entity.position, entity.size, entity.color);
+      drawTexture(getTexture("player1"), entity.position, entity.size, TOP_LEFT, entity.color);
       break;
    }
 }

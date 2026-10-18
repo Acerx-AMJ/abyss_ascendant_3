@@ -4,6 +4,7 @@
 #include "SRU/render.hpp"
 #include "SRU/text.hpp"
 #include "SRU/file.hpp"
+#include "SRU/util.hpp"
 #include "state/gameState.hpp"
 
 constexpr float iconRotationSpeed = 360.0f; // degrees per second
@@ -67,9 +68,8 @@ void LoadingState::render() {
    Font font = getFont("slackey");
    Texture icon = getTexture("loading");
    float splashFontSize = getFontSizeScaled(30.0f);
-   float splashFontSpacing = fitSpacing(splashFontSize);
 
-   drawTextCenteredResponsive(font, {0.5f, 0.375f}, finalLoadingText.c_str(), 60.0f);
-   drawTextCenteredResponsive(font, {0.5f, 0.75f}, fitInside(splash, font, {GetScreenWidth() * 0.9f, GetScreenHeight() * 0.375f}, splashFontSize, splashFontSpacing).c_str(), 30.0f, GRAY);
-   drawTextureCenteredResponsiveCubic(icon, {0.5f, 0.5f}, {0.1f, 0.1f}, WHITE, iconRotation);
+   drawTextResponsive(font, {0.5f, 0.375f}, finalLoadingText.c_str(), 60.0f, CENTER);
+   drawTextResponsive(font, {0.5f, 0.75f}, fitInside(splash, font, {GetScreenWidth() * 0.9f, GetScreenHeight() * 0.375f}, splashFontSize).c_str(), 30.0f, CENTER, GRAY);
+   drawTextureResponsive(icon, {0.5f, 0.5f}, {0.1f, 0.1f}, CENTER, WHITE, FULL_SOURCE, WINDOW_AREA, CUBIC_RATIO, iconRotation);
 }
